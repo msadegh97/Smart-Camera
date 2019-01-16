@@ -43,10 +43,8 @@ def detection(image):
     boxes, scores, labels = model.predict_on_batch(np.expand_dims(image, axis=0))
     print("processing time: ", time.time() - start)
 
-    # correct for image scale
     boxes /= scale
     b= ()
-    # visualize detections
     for box, score, label in zip(boxes[0], scores[0], labels[0]):
         # scores are sorted so we can break
         if score < 0.5:
@@ -78,7 +76,6 @@ def run(source=0, dispLoc=False):
         print("Video device or file couldn't be opened")
         exit()
 
-    print("Press key `p` to pause the video to start tracking")
     while True:
         # Retrieve an image and Display it.
         retval, img = cam.read()
