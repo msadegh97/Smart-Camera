@@ -1,4 +1,3 @@
-import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import dlib
@@ -126,7 +125,7 @@ def run(source=0, dispLoc=False):
         pt1 = (int(rect.left()), int(rect.top()))
         pt2 = (int(rect.right()), int(rect.bottom()))
         if timer > 5:
-            print(pt1[0])	
+            print(pt1[0])
             if(pt1[0] > 250):
                 print('send 1')
                 myser.write("1\r".encode())
@@ -163,7 +162,6 @@ if __name__ == "__main__":
     parser = ap.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-d', "--deviceID", help="Device ID")
-    group.add_argument('-v', "--videoFile", help="Path to Video File")
     parser.add_argument('-l', "--dispLoc", dest="dispLoc", action="store_true")
     args = vars(parser.parse_args())
 

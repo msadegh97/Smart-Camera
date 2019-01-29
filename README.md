@@ -9,13 +9,13 @@ This project has various application for example it can be used for filming a co
 sudo pip3 install keras  tensorflow opencv-python keras-retinanet dlib numpy skimage
 ~~~~
 ~~~~
-python3 tracker/system/tracker.py --device deviceID
+python3 tracker/system/tracker.py --deviceID 0
 ~~~~
 
 ## Authors:
   - [Mohammad Sadegh Akhondzadeh](http://msakhondzadeh.ece.iut.ac.ir)
   - [Amin Samadi](https://github.com/aminsmd)
-  - [Eshagh Moutabi](https://github.com/EshaghMoutabi)
+  - [Eshagh Moutabi](https://github.com/EshaghMoutabi )
 
 
 ## Question?
