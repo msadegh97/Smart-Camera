@@ -20,7 +20,8 @@ import cv2
 import os
 import numpy as np
 import time
-
+import serial
+import time
 import tensorflow as tf
 
 def get_session():
@@ -43,8 +44,10 @@ def detection(image):
     boxes, scores, labels = model.predict_on_batch(np.expand_dims(image, axis=0))
     print("processing time: ", time.time() - start)
 
+    # correct for image scale
     boxes /= scale
     b= ()
+    # visualize detections
     for box, score, label in zip(boxes[0], scores[0], labels[0]):
         # scores are sorted so we can break
         if score < 0.5:
@@ -58,7 +61,7 @@ def detection(image):
 
 
 #
-# def classifier(img):
+# def classifier(img, crop ):
 #     image_array = np.asarray(img)
 #     image_array = image_array / 255.
 #     image_array = resize(image_array, (120, 360), mode='constant', anti_aliasing=True)
@@ -76,6 +79,7 @@ def run(source=0, dispLoc=False):
         print("Video device or file couldn't be opened")
         exit()
 
+    print("Press key `p` to pause the video to start tracking")
     while True:
         # Retrieve an image and Display it.
         retval, img = cam.read()
@@ -87,10 +91,12 @@ def run(source=0, dispLoc=False):
         cv2.namedWindow("Image", cv2.WINDOW_FULLSCREEN)
         cv2.imshow("Image", img)
     cv2.destroyWindow("Image")
-
+    retval, img = cam.read()
 
     cv2.namedWindow("Image", cv2.WINDOW_FULLSCREEN)
     cv2.imshow("Image", img)
+    timer = 0
+    temp = 0
 
     tracker = dlib.correlation_tracker()
     points =detection(img)
@@ -105,19 +111,35 @@ def run(source=0, dispLoc=False):
         g+= 1
         # Update the tracker
         #
+
+        tracker.update(img)
+        rect = tracker.get_position()
         # if(not classifier(img) and g > 150):
         #     g=0
-        #     points = detection(img)
+        #     points = detection(img, rect)
         #     if len(points) < 4:
         #         points = (0, 0, 2, 2)
         #     print(points)
         #     tracker.start_track(img, dlib.rectangle(*points))
 
 
-        tracker.update(img)
-        rect = tracker.get_position()
         pt1 = (int(rect.left()), int(rect.top()))
         pt2 = (int(rect.right()), int(rect.bottom()))
+        if timer > 5:
+            print(pt1[0])	
+            if(pt1[0] > 250):
+                print('send 1')
+                myser.write("1\r".encode())
+
+            elif (pt1[0] < 100):
+                print('send 2')
+                myser.write("2\r".encode())
+            timer = 0
+
+        timer +=1
+
+
+
         cv2.rectangle(img, pt1, pt2, (255, 255, 255), 3)
         cv2.namedWindow("Image", cv2.WINDOW_FULLSCREEN)
         cv2.imshow("Image", img)
@@ -132,10 +154,11 @@ def run(source=0, dispLoc=False):
 if __name__ == "__main__":
     # Parse command line arguments
     ####detection
-    model = models.load_model('/home/msadegh/workspace/embedded_project/tracker/detection/inference/resnet50_coco_best_v2.1.0.h5', backbone_name='resnet50')
+    model = models.load_model('./resnet50_coco_best_v2.1.0.h5', backbone_name='resnet50')
     labels_to_names = {0: 'Person'}
-    myclassifier = keras.models.load_model('/home/msadegh/workspace/embedded_project/tracker/system/mymodel')
+#    myclassifier = keras.models.load_model('/home/msadegh/workspace/embedded_project/tracker/system/mymodel')
 
+    myser = serial.Serial('/dev/ttyACM0', 9600)
     ####detection
     parser = ap.ArgumentParser()
     group = parser.add_mutually_exclusive_group(required=True)
