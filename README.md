@@ -1,7 +1,7 @@
 # Smart Camera
 This is a part of out project for embedding system which aim to find a person in image and try control camera to track that man.
-this system also has a voice assistant to control camera.(this part is not in repo)
-This project has various application for example it can be used for filming a course without using cameraman
+this system also has a voice assistant to control camera.(this part is not in this repo)
+This project has various applications for example it can be used for filming a course without using cameraman
 
 
 ## How to use:
